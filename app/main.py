@@ -33,10 +33,6 @@ async def on_message(message):
                 files_to_send.append(discord_file)
         message_content=message.content
         message_channel=message.channel
-        try:
-            await message.delete()
-        except:
-            pass
         gemini_response = await gemini_client.aio.models.generate_content(
             model='gemini-2.5-flash',
             contents=message_content,
@@ -48,8 +44,12 @@ async def on_message(message):
         t=gemini_response.text
         t=t.split("<answer>")[-1]
         t=t.split("</answer>")[0]
+        try:
+            await message.delete()
+        except:
+            pass
         await message_channel.send(content=t, files=files_to_send)
-
+    
 
 server_thread()
 client.run(TOKEN)
