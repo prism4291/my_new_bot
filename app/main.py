@@ -5,6 +5,7 @@ import io
 import asyncio
 from server import server_thread
 from google import genai
+from google.genai import types
 
 
 dotenv.load_dotenv()
