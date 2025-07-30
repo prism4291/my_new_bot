@@ -1,6 +1,7 @@
 import discord
 import dotenv
 import os
+import io
 import asyncio
 
 from server import server_thread
