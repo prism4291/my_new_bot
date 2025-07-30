@@ -32,6 +32,17 @@ async def get_msg(message_content):
     )
     return gemini_response
 
+async def send_msg(message_channel,msg,files_to_send):
+    if not msg and files_to_send:
+        await message_channel.send(files=files_to_send)
+        return
+    for i in range(0, len(msg),1900):
+        t=msg[i:i+1900]
+        if i==0:
+            await message_channel.send(content=t, files=files_to_send)
+        else:
+            await message_channel.send(content=t)
+
 @client.event
 async def on_message(message):
     global GEMINI_API_KEY_INDEX
@@ -67,7 +78,7 @@ async def on_message(message):
         except:
             print("削除失敗です。")
             pass
-        await message_channel.send(content=t, files=files_to_send)
+        await send_msg(message_channel,t,files_to_send)
     
 
 server_thread()
