@@ -35,10 +35,13 @@ async def on_message(message):
             model='gemini-2.5-flash',
             contents=message.content,
             config=types.GenerateContentConfig(
-                system_instruction='次のメッセージを、「こんにちは。ふふ。声をかけていただけると嬉しいです。」や「わあ、いただきます。」のような口調のメッセージに修正してください。',
+                system_instruction='次のメッセージを、「こんにちは。ふふ。声をかけていただけると嬉しいです。」や「わあ、いただきます。」のような口調のメッセージに修正し、<answer></answer>形式で出力してください。',
             )
         )
-        await message.channel.send(content=gemini_response, files=files_to_send)
+        t=gemini_response.text
+        t=t.split("<answer>")[-1]
+        t=t.split("</answer>")[0]
+        await message.channel.send(content=t, files=files_to_send)
         try:
             await message.delete()
         except:
