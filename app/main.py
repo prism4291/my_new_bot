@@ -1,6 +1,7 @@
 import discord
 import dotenv
 import os
+import asyncio
 
 from server import server_thread
 
@@ -16,7 +17,7 @@ client = discord.Client(intents=intents)
 async def on_message(message):
     if message.author == client.user:
         return
-    message.channel.send(message.content)
+    await message.channel.send(message.content)
 
 server_thread()
 client.run(TOKEN)
