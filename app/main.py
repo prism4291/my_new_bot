@@ -31,21 +31,25 @@ async def on_message(message):
                 file_bytes = await attachment.read()
                 discord_file = discord.File(io.BytesIO(file_bytes), filename=attachment.filename)
                 files_to_send.append(discord_file)
+        message_content=message.content
+        message_channel=message.channel
+        try:
+            await message.delete()
+        except:
+            pass
         gemini_response = await gemini_client.aio.models.generate_content(
             model='gemini-2.5-flash',
-            contents=message.content,
+            contents=message_content,
             config=types.GenerateContentConfig(
                 system_instruction='次のメッセージを、「こんにちは。ふふ。声をかけていただけると嬉しいです。」や「わあ、いただきます。」のような口調のメッセージに修正し、<answer></answer>形式で出力してください。',
+                thinking_config=types.ThinkingConfig(thinking_budget=0),
             )
         )
         t=gemini_response.text
         t=t.split("<answer>")[-1]
         t=t.split("</answer>")[0]
-        await message.channel.send(content=t, files=files_to_send)
-        try:
-            await message.delete()
-        except:
-            pass
+        await message_channel.send(content=t, files=files_to_send)
+
 
 server_thread()
 client.run(TOKEN)
