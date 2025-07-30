@@ -17,7 +17,8 @@ client = discord.Client(intents=intents)
 async def on_message(message):
     if message.author == client.user:
         return
-    await message.channel.send(message.content)
+    if message.content:
+        await message.channel.send(message.content)
 
 server_thread()
 client.run(TOKEN)
