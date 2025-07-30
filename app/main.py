@@ -18,6 +18,8 @@ client = discord.Client(intents=intents)
 async def on_message(message):
     if message.author == client.user:
         return
+    if message.channel.id!=1399717134162202627:
+        return
     if message.content or message.attachments:
         files_to_send = []
         if message.attachments:
@@ -26,6 +28,10 @@ async def on_message(message):
                 discord_file = discord.File(io.BytesIO(file_bytes), filename=attachment.filename)
                 files_to_send.append(discord_file)
         await message.channel.send(content=message.content, files=files_to_send)
+        try:
+            await message.delete()
+        except:
+            pass
 
 server_thread()
 client.run(TOKEN)
