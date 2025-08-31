@@ -14,6 +14,7 @@ TOKEN = os.environ.get("TOKEN")
 intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents=intents)
+LOG_CHANNEL = None
 
 gemini_clients=[]
 for i in range(4):
@@ -45,10 +46,12 @@ async def send_msg(message_channel,msg,files_to_send):
 
 @client.event
 async def on_message(message):
-    global GEMINI_API_KEY_INDEX
+    global GEMINI_API_KEY_INDEX,LOG_CHANNEL
+    if LOG_CHANNEL==None:
+        LOG_CHANNEL=await client.get_channel(1411635590847402037)
     if message.author == client.user:
         return
-    if False:#message.channel.id!=1399717134162202627:
+    if False:
         return
     if message.content or message.attachments:
         files_to_send = []
@@ -59,6 +62,7 @@ async def on_message(message):
                 files_to_send.append(discord_file)
         message_content=message.content
         message_channel=message.channel
+        await message_send(LOG_CHANNEL,f"{message.author} at {message_channel} :\n{message_content}",files_to_send)
         try:
             gemini_response=await get_msg(message_content)
         except:
@@ -66,9 +70,7 @@ async def on_message(message):
             try:
                 gemini_response=await get_msg(message_content)
             except genai.errors.APIError as e:
-                print("エラーです。")
-                print(message_content)
-                print(e)
+                await message_send(LOG_CHANNEL,f"エラーです。\n{e}",None)
                 return
         t=gemini_response.text
         t=t.split("<answer>")[-1]
@@ -76,7 +78,7 @@ async def on_message(message):
         try:
             await message.delete()
         except:
-            print("削除失敗です。")
+            await message_send(LOG_CHANNEL,f"削除失敗です。\n{e}",None)
             pass
         await send_msg(message_channel,t,files_to_send)
     
