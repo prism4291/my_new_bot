@@ -48,7 +48,7 @@ async def on_message(message):
     global GEMINI_API_KEY_INDEX
     if message.author == client.user:
         return
-    if message.channel.id!=1399717134162202627:
+    if False:#message.channel.id!=1399717134162202627:
         return
     if message.content or message.attachments:
         files_to_send = []
