@@ -45,10 +45,14 @@ async def send_msg(message_channel,msg,files_to_send):
             await message_channel.send(content=t)
 
 @client.event
+async def on_ready():
+    global LOG_CHANNEL
+    LOG_CHANNEL = client.get_channel(1411635590847402037)
+    await send_msg(LOG_CHANNEL,"Ready!",None)
+
+@client.event
 async def on_message(message):
     global GEMINI_API_KEY_INDEX,LOG_CHANNEL
-    if LOG_CHANNEL==None:
-        LOG_CHANNEL=await client.get_channel(1411635590847402037)
     if message.author == client.user:
         return
     if False:
@@ -62,7 +66,7 @@ async def on_message(message):
                 files_to_send.append(discord_file)
         message_content=message.content
         message_channel=message.channel
-        await message_send(LOG_CHANNEL,f"{message.author} at {message_channel} :\n{message_content}",files_to_send)
+        await send_msg(LOG_CHANNEL,f"{message.author} at {message_channel} :\n{message_content}",files_to_send)
         try:
             gemini_response=await get_msg(message_content)
         except:
@@ -70,7 +74,7 @@ async def on_message(message):
             try:
                 gemini_response=await get_msg(message_content)
             except genai.errors.APIError as e:
-                await message_send(LOG_CHANNEL,f"エラーです。\n{e}",None)
+                await send_msg(LOG_CHANNEL,f"エラーです。\n{e}",None)
                 return
         t=gemini_response.text
         t=t.split("<answer>")[-1]
@@ -78,7 +82,7 @@ async def on_message(message):
         try:
             await message.delete()
         except:
-            await message_send(LOG_CHANNEL,f"削除失敗です。\n{e}",None)
+            await send_msg(LOG_CHANNEL,f"削除失敗です。\n{e}",None)
             pass
         await send_msg(message_channel,t,files_to_send)
     
