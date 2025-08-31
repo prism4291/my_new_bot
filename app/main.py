@@ -81,7 +81,7 @@ async def on_message(message):
         t=t.split("</answer>")[0]
         try:
             await message.delete()
-        except:
+        except Exception as e:
             await send_msg(LOG_CHANNEL,f"削除失敗です。\n{e}",None)
             pass
         await send_msg(message_channel,t,files_to_send)
