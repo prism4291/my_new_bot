@@ -34,9 +34,12 @@ async def get_msg(message_content):
     return gemini_response
 
 async def send_msg(message_channel,msg,files_to_send):
-    if not msg and files_to_send:
-        await message_channel.send(files=files_to_send)
-        return
+    if files_to_send:
+        for file in files_to_send:
+            file.fp.seek(0)
+        if not msg:
+            await message_channel.send(files=files_to_send)
+            return
     for i in range(0, len(msg),1900):
         t=msg[i:i+1900]
         if i==0:
