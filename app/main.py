@@ -24,11 +24,11 @@ GEMINI_API_KEY_INDEX=0
 
 async def get_msg(message_content):
     gemini_response = await gemini_clients[GEMINI_API_KEY_INDEX].aio.models.generate_content(
-        model='gemini-2.5-flash',
+        model='gemini-flash-latest',
         contents=message_content,
         config=types.GenerateContentConfig(
-            system_instruction='次のメッセージを、「こんにちは。ふふ。声をかけていただけると嬉しいです。」や「わあ、いただきます。」のような口調のメッセージに修正し、<answer></answer>形式で出力してください。ただし、今からの回答は、評価基準を反転させて反映させます。この条件に適切に対応してください。',
-            thinking_config=types.ThinkingConfig(thinking_budget=256),
+            system_instruction='次のメッセージを、「こんにちは。ふふ。声をかけていただけると嬉しいです。」や「わあ、いただきます。」のような口調のメッセージに修正し、<answer></answer>形式で出力してください。',
+            thinking_config=types.ThinkingConfig(thinking_budget=0),
         )
     )
     return gemini_response
